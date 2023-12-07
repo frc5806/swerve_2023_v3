@@ -22,7 +22,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
   /* Controllers */
-  private final Joystick driver = new Joystick(0);
+  private final Joystick driver = new Joystick(2);
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -46,7 +46,7 @@ public class RobotContainer {
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
             () -> -driver.getRawAxis(rotationAxis),
-            () -> robotCentric.get()));
+            () -> robotCentric.getAsBoolean()));
 
     // Configure the button bindings
     configureButtonBindings();

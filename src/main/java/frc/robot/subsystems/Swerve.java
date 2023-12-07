@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +27,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw());
+    swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), null);
 
     mSwerveMods =
         new SwerveModule[] {
@@ -69,7 +70,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
-    swerveOdometry.resetPosition(pose, getYaw());
+    swerveOdometry.resetPosition(getYaw(), null, pose);
   }
 
   public SwerveModuleState[] getStates() {
@@ -79,6 +80,14 @@ public class Swerve extends SubsystemBase {
     }
     return states;
   }
+
+  public SwerveModulePosition[] getModulePositions(){
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+    for(SwerveModule mod : mSwerveMods){
+        positions[mod.moduleNumber] = mod.getPosition();
+    }
+    return positions;
+}
 
   public void zeroGyro() {
     gyro.setYaw(0);
@@ -92,7 +101,7 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    swerveOdometry.update(getYaw(), getStates());
+    swerveOdometry.update(getYaw(), getModulePositions());
     field.setRobotPose(getPose());
 
     for (SwerveModule mod : mSwerveMods) {
